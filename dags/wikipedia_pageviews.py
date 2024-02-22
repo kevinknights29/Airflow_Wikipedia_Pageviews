@@ -13,7 +13,7 @@ dag = DAG(
 get_data = BashOperator(
     task_id="get_data",
     bash_command=(
-        "curl -o /tmp/wikipageview.gz"
+        "curl -o /tmp/wikipageview.gz "
         "https://dumps.wikimedia.org/other/pageviews/"
         "{{ execution_date.year }}/"
         "{{ execution_date.year }}-"
