@@ -15,8 +15,8 @@ dag = DAG(
 )
 
 
-def _get_data(execution_date):
-    year, month, day, hour, *_ = local_tz.convert(execution_date).timetuple()
+def _get_data(data_interval_start):
+    year, month, day, hour, *_ = local_tz.convert(data_interval_start).timetuple()
     url = (
         "https://dumps.wikimedia.org/other/pageviews/"
         f"{year}/{year}-{month:0>2}/"
