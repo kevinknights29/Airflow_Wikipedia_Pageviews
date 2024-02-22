@@ -1,0 +1,2 @@
+pre-commit==3.6.2
+apache-airflow==2.8.1
