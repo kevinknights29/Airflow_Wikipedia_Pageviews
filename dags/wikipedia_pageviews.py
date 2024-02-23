@@ -117,4 +117,4 @@ write_to_postgres = PostgresOperator(
 )
 
 # Execution Order
-get_data >> extract_gz >> fetch_pageviews >> create_sql_query
+get_data >> extract_gz >> fetch_pageviews >> create_sql_query >> write_to_postgres
