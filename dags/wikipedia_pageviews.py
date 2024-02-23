@@ -8,6 +8,7 @@ import pendulum
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
+from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 TZ = "America/Panama"
@@ -15,6 +16,7 @@ LOCAL_TZ = pendulum.timezone(TZ)
 GZIP_OUTPUT_PATH = "/tmp/wikipageview.gz"
 JSON_OUTPUT_PATH = "/tmp/pageviews.json"
 SQL_OUTPUT_PATH = "/tmp/pageviews.sql"
+SQL_ANALYTICS_PATH = "sql/most_popular_hour_per_page.sql"
 INTEREST_PAGENAMES = [
     "Meta",
     "Microsoft",
@@ -122,5 +124,21 @@ write_to_postgres = PostgresOperator(
     dag=dag,
 )
 
+
+def _get_page_analytics(sql_query, postgres_conn_id="postgres_default"):
+    pg_hook = PostgresHook().get_hook(conn_id=postgres_conn_id)
+    results = pg_hook.get_records(sql_query)
+    print(results)
+
+
+get_page_analytics = PythonOperator(
+    task_id="get_page_analytics",
+    python_callable=_get_page_analytics,
+    op_kwargs={
+        "sql_query": open(SQL_ANALYTICS_PATH).read(),
+    },
+    dag=dag,
+)
+
 # Execution Order
-get_data >> extract_gz >> fetch_pageviews >> create_sql_query >> write_to_postgres
+get_data >> extract_gz >> fetch_pageviews >> create_sql_query >> write_to_postgres >> get_page_analytics
