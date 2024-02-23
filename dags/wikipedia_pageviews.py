@@ -56,7 +56,8 @@ extract_gz = BashOperator(
 
 def _fetch_pageviews(pagenames, pageviews_file_path):
     result = dict.fromkeys(pagenames, 0)
-    with open(file=Path(pageviews_file_path).stem, encoding="utf-8") as f:
+    file_path = Path(pageviews_file_path).parent / Path(pageviews_file_path).stem
+    with open(file=file_path, encoding="utf-8") as f:
         for line in f:
             domain_code, page_title, view_counts, _ = line.split(" ")
             if domain_code == "en" and page_title in pagenames:
