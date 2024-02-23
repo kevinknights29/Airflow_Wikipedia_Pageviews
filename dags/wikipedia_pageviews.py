@@ -37,7 +37,7 @@ get_data = PythonOperator(
 
 extract_gz = BashOperator(
     task_id="extract_gz",
-    bash_command="gunzip --force '$path'",
+    bash_command="gunzip --force $path",
     env={"path": GZIP_OUTPUT_PATH},
     dag=dag,
 )
