@@ -85,7 +85,7 @@ fetch_pageviews = PythonOperator(
 def _create_sql_query(pageviews_file_path, output_path):
     results = {}
     with open(pageviews_file_path, encoding="utf-8") as f:
-        results = json.loads(f)
+        results = json.loads(f.read())
     with open(output_path, mode="w", encoding="utf-8") as f:
         f.write(
             (
