@@ -4,10 +4,13 @@ from urllib import request
 
 import pendulum
 from airflow import DAG
+from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 
 tz = "America/Panama"
 local_tz = pendulum.timezone(tz)
+gzip_output_path = "/tmp/wikipageview.gz"
+
 dag = DAG(
     dag_id="wikipedia_pageviews",
     start_date=pendulum.datetime(2024, 1, 1, tz=local_tz),
@@ -28,6 +31,16 @@ def _get_data(output_path, **context):
 get_data = PythonOperator(
     task_id="get_data",
     python_callable=_get_data,
-    op_kwargs={"output_path": "/tmp/wikipageview.gz"},
+    op_kwargs={"output_path": gzip_output_path},
     dag=dag,
 )
+
+extract_gz = BashOperator(
+    task_id="extract_gz",
+    bash_command="gunzip --force '$path'",
+    env={"path": gzip_output_path},
+    dag=dag,
+)
+
+# Execution Order
+get_data >> extract_gz
