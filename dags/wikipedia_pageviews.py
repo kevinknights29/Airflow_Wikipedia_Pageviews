@@ -62,7 +62,7 @@ def _fetch_pageviews(pagenames, pageviews_file_path):
             domain_code, page_title, view_counts, _ = line.split(" ")
             if domain_code == "en" and page_title in pagenames:
                 result[page_title] = view_counts
-    print("Results:", json.dump(result, indent=4), sep="\n")
+    print("Results:", json.dumps(result, indent=4), sep="\n")
 
 
 fetch_pageviews = PythonOperator(
