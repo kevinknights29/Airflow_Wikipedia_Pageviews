@@ -131,8 +131,8 @@ def _get_page_analytics(sql_query_path, postgres_conn_id="postgres_default"):
         sql_query = f.read()
     pg_hook = PostgresHook().get_hook(conn_id=postgres_conn_id)
     results = pg_hook.get_records(sql_query)
-    for pagename, count, hour in results:
-        print(f"{pagename} has the most views ({count}) at {hour}")
+    for pagename, hour, count in results:
+        print(f"{pagename} has the most views ({int(count)}) at {int(hour)}")
 
 
 get_page_analytics = PythonOperator(
