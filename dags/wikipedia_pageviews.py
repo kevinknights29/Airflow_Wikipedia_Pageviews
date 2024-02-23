@@ -94,11 +94,16 @@ def _create_sql_query(pageviews_file_path, output_path):
                 "CREATE TABLE IF NOT EXISTS pageviews_count ("
                 "pagename       VARCHAR(255) NOT NULL,"
                 "value          INT NOT NULL,"
-                "insertion_date TIMESTAMP WITH TIMEZONE DEFAULT CURRENT_TIMESTAMP);\n"
+                "insertion_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP);\n"
             ),
         )
         for key, value in results.items():
-            f.write(f"INSERT INTO pageviews_count VALUES ('{key}', {value}, {pendulum.now(tz=LOCAL_TZ)});\n")
+            f.write(
+                (
+                    f"INSERT INTO pageviews_count VALUES ('{key}', {value},"
+                    f" '{pendulum.now(tz=LOCAL_TZ).strftime('%Y-%m-%d %H:%M:%S%z')}');\n"
+                ),
+            )
 
 
 create_sql_query = PythonOperator(
@@ -112,7 +117,7 @@ create_sql_query = PythonOperator(
 
 write_to_postgres = PostgresOperator(
     task_id="write_to_postgres",
-    sql=SQL_OUTPUT_PATH + " ",
+    sql=open(SQL_OUTPUT_PATH).read(),
     postgres_conn_id="postgres_default",
     dag=dag,
 )
