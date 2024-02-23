@@ -1,6 +1,6 @@
 # Airflow_Wikipedia_Pageviews
 
-This project implements the Airflow DAG presented in chapter 4 of the book `Data Pipelines with Apache Airflow` by B. Harenslak and J. de Ruiter
+This project implements the Airflow DAG presented in chapter 4 of the book [_Data Pipelines with Apache Airflow_ by B. Harenslak and J. de Ruiter](https://amzn.to/49qSLIV)
 
 ## Results
 
@@ -95,3 +95,19 @@ To take at the process flow of the pipeline. Select the `Graph` view.
 Generated with: `tree --gitignore --prune`
 
 ### Have fun! 😄
+
+## Reference
+
+- [_Data Pipelines with Apache Airflow_ by B. Harenslak and J. de Ruiter](https://amzn.to/49qSLIV)
+- [Develop your Astro project](https://docs.astronomer.io/astro/cli/develop-project)
+- [Airflow Docs](https://airflow.apache.org/docs/apache-airflow/stable/index.html)
+- [TemplateNotFound error when running simple Airflow BashOperator](https://stackoverflow.com/questions/42147514/templatenotfound-error-when-running-simple-airflow-bashoperator)
+- [How to Change the Timezone of a Postgres Database](https://www.commandprompt.com/education/how-to-change-the-timezone-of-a-postgres-database/)
+- [Airflow PostgresHook Example](https://gist.github.com/antweiss/a6716339983bcc93aa505fd0c620b013)
+- [Start a process when the container starts
+](https://code.visualstudio.com/remote/advancedcontainers/start-processes)
+- [Read JSON file using Python](https://www.geeksforgeeks.org/read-json-file-using-python/)
+- [Reading and Writing JSON to a File in Python](https://www.geeksforgeeks.org/reading-and-writing-json-to-a-file-in-python/)
+- [Passing a command line argument to airflow BashOperator](https://stackoverflow.com/questions/42016491/passing-a-command-line-argument-to-airflow-bashoperator)
+- [Templates reference](https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html)
+- [Time Zones](https://airflow.apache.org/docs/apache-airflow/stable/authoring-and-scheduling/timezone.html)
