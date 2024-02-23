@@ -12,6 +12,7 @@ from airflow.operators.python import PythonOperator
 TZ = "America/Panama"
 LOCAL_TZ = pendulum.timezone(TZ)
 GZIP_OUTPUT_PATH = "/tmp/wikipageview.gz"
+JSON_OUTPUT_PATH = "/tmp/pageviews.json"
 INTEREST_PAGENAMES = [
     "Meta",
     "Microsoft",
@@ -54,7 +55,7 @@ extract_gz = BashOperator(
 )
 
 
-def _fetch_pageviews(pagenames, pageviews_file_path):
+def _fetch_pageviews(pagenames, pageviews_file_path, output_path):
     result = dict.fromkeys(pagenames, 0)
     file_path = Path(pageviews_file_path).parent / Path(pageviews_file_path).stem
     with open(file=file_path, encoding="utf-8") as f:
@@ -62,7 +63,9 @@ def _fetch_pageviews(pagenames, pageviews_file_path):
             domain_code, page_title, view_counts, _ = line.split(" ")
             if domain_code == "en" and page_title in pagenames:
                 result[page_title] = view_counts
-    print("Results:", json.dumps(result, indent=4), sep="\n")
+    with open(output_path, mode="w", encoding="utf-8") as f:
+        f.write(json.dumps(result, indent=4))
+    print("Results:", json.load(output_path), sep="\n")
 
 
 fetch_pageviews = PythonOperator(
@@ -71,6 +74,7 @@ fetch_pageviews = PythonOperator(
     op_kwargs={
         "pagenames": INTEREST_PAGENAMES,
         "pageviews_file_path": GZIP_OUTPUT_PATH,
+        "output_path": JSON_OUTPUT_PATH,
     },
     dag=dag,
 )
