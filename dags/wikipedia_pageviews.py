@@ -8,6 +8,7 @@ import pendulum
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
+from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 TZ = "America/Panama"
 LOCAL_TZ = pendulum.timezone(TZ)
@@ -106,6 +107,13 @@ create_sql_query = PythonOperator(
         "pageviews_file_path": JSON_OUTPUT_PATH,
         "output_path": SQL_OUTPUT_PATH,
     },
+)
+
+write_to_postgres = PostgresOperator(
+    task_id="write_to_postgres",
+    sql=SQL_OUTPUT_PATH,
+    postgres_conn_id="postgres_default",
+    dag=dag,
 )
 
 # Execution Order
