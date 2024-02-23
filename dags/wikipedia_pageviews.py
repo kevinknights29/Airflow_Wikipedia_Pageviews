@@ -95,7 +95,7 @@ def _create_sql_query(pageviews_file_path, output_path):
                 "insertion_date TIMESTAMP WITH TIMEZONE DEFAULT CURRENT_TIMESTAMP);\n"
             ),
         )
-        for key, value in results:
+        for key, value in results.items():
             f.write(f"INSERT INTO pageviews_count VALUES ('{key}', {value}, {pendulum.now(tz=LOCAL_TZ)});\n")
 
 
