@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from urllib import request
 
 import pendulum
@@ -10,6 +12,15 @@ from airflow.operators.python import PythonOperator
 TZ = "America/Panama"
 LOCAL_TZ = pendulum.timezone(TZ)
 GZIP_OUTPUT_PATH = "/tmp/wikipageview.gz"
+INTEREST_PAGENAMES = [
+    "Meta",
+    "Microsoft",
+    "Apple",
+    "Amazon",
+    "Netflix",
+    "Nvidia",
+    "Google",
+]
 
 dag = DAG(
     dag_id="wikipedia_pageviews",
@@ -42,5 +53,26 @@ extract_gz = BashOperator(
     dag=dag,
 )
 
+
+def _fetch_pageviews(pagenames, pageviews_file_path):
+    result = dict.fromkeys(pagenames, 0)
+    with open(file=Path(pageviews_file_path).stem, encoding="utf-8") as f:
+        for line in f:
+            domain_code, page_title, view_counts, _ = line.split(" ")
+            if domain_code == "en" and page_title in pagenames:
+                result[page_title] = view_counts
+    print("Results:", json.dump(result, indent=4), sep="\n")
+
+
+fetch_pageviews = PythonOperator(
+    task_id="fetch_pageviews",
+    python_callable=_fetch_pageviews,
+    op_kwargs={
+        "pagenames": INTEREST_PAGENAMES,
+        "pageviews_file_path": GZIP_OUTPUT_PATH,
+    },
+    dag=dag,
+)
+
 # Execution Order
-get_data >> extract_gz
+get_data >> extract_gz >> fetch_pageviews
