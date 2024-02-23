@@ -12,9 +12,9 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 TZ = "America/Panama"
 LOCAL_TZ = pendulum.timezone(TZ)
-GZIP_OUTPUT_PATH = "/tmp/wikipageview.gz "
-JSON_OUTPUT_PATH = "/tmp/pageviews.json "
-SQL_OUTPUT_PATH = "/tmp/pageviews.sql "
+GZIP_OUTPUT_PATH = "/tmp/wikipageview.gz"
+JSON_OUTPUT_PATH = "/tmp/pageviews.json"
+SQL_OUTPUT_PATH = "/tmp/pageviews.sql"
 INTEREST_PAGENAMES = [
     "Meta",
     "Microsoft",
@@ -111,7 +111,7 @@ create_sql_query = PythonOperator(
 
 write_to_postgres = PostgresOperator(
     task_id="write_to_postgres",
-    sql=SQL_OUTPUT_PATH,
+    sql=SQL_OUTPUT_PATH + " ",
     postgres_conn_id="postgres_default",
     dag=dag,
 )
