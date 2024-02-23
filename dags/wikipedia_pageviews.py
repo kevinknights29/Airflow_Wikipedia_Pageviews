@@ -16,7 +16,7 @@ LOCAL_TZ = pendulum.timezone(TZ)
 GZIP_OUTPUT_PATH = "/tmp/wikipageview.gz"
 JSON_OUTPUT_PATH = "/tmp/pageviews.json"
 SQL_OUTPUT_PATH = "/tmp/pageviews.sql"
-SQL_ANALYTICS_PATH = "sql/most_popular_hour_per_page.sql"
+SQL_ANALYTICS_PATH = "dags/sql/most_popular_hour_per_page.sql"
 INTEREST_PAGENAMES = [
     "Meta",
     "Microsoft",
@@ -125,7 +125,10 @@ write_to_postgres = PostgresOperator(
 )
 
 
-def _get_page_analytics(sql_query, postgres_conn_id="postgres_default"):
+def _get_page_analytics(sql_query_path, postgres_conn_id="postgres_default"):
+    sql_query = ""
+    with open(Path(sql_query_path).resolve(), encoding="utf-8") as f:
+        sql_query = f.read()
     pg_hook = PostgresHook().get_hook(conn_id=postgres_conn_id)
     results = pg_hook.get_records(sql_query)
     print(results)
@@ -135,7 +138,7 @@ get_page_analytics = PythonOperator(
     task_id="get_page_analytics",
     python_callable=_get_page_analytics,
     op_kwargs={
-        "sql_query": open(SQL_ANALYTICS_PATH).read(),
+        "sql_query_path": SQL_ANALYTICS_PATH,
     },
     dag=dag,
 )
