@@ -12,9 +12,9 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 TZ = "America/Panama"
 LOCAL_TZ = pendulum.timezone(TZ)
-GZIP_OUTPUT_PATH = "/tmp/wikipageview.gz"
-JSON_OUTPUT_PATH = "/tmp/pageviews.json"
-SQL_OUTPUT_PATH = "/tmp/pageviews.sql"
+GZIP_OUTPUT_PATH = "/tmp/wikipageview.gz "
+JSON_OUTPUT_PATH = "/tmp/pageviews.json "
+SQL_OUTPUT_PATH = "/tmp/pageviews.sql "
 INTEREST_PAGENAMES = [
     "Meta",
     "Microsoft",
