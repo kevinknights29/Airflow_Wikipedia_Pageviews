@@ -13,6 +13,7 @@ TZ = "America/Panama"
 LOCAL_TZ = pendulum.timezone(TZ)
 GZIP_OUTPUT_PATH = "/tmp/wikipageview.gz"
 JSON_OUTPUT_PATH = "/tmp/pageviews.json"
+SQL_OUTPUT_PATH = "/tmp/pageviews.sql"
 INTEREST_PAGENAMES = [
     "Meta",
     "Microsoft",
@@ -80,5 +81,32 @@ fetch_pageviews = PythonOperator(
     dag=dag,
 )
 
+
+def _create_sql_query(pageviews_file_path, output_path):
+    results = {}
+    with open(pageviews_file_path, encoding="utf-8") as f:
+        results = json.loads(f)
+    with open(output_path, mode="w", encoding="utf-8") as f:
+        f.write(
+            (
+                "CREATE TABLE IF NOT EXISTS pageviews_count ("
+                "pagename       VARCHAR(255) NOT NULL,"
+                "value          INT NOT NULL,"
+                "insertion_date TIMESTAMP WITH TIMEZONE DEFAULT CURRENT_TIMESTAMP);\n"
+            ),
+        )
+        for key, value in results:
+            f.write(f"INSERT INTO pageviews_count VALUES ('{key}', {value}, {pendulum.now(tz=LOCAL_TZ)});\n")
+
+
+create_sql_query = PythonOperator(
+    task_id="create_sql_query",
+    python_callable=_create_sql_query,
+    op_kwargs={
+        "pageviews_file_path": JSON_OUTPUT_PATH,
+        "output_path": SQL_OUTPUT_PATH,
+    },
+)
+
 # Execution Order
-get_data >> extract_gz >> fetch_pageviews
+get_data >> extract_gz >> fetch_pageviews >> create_sql_query
