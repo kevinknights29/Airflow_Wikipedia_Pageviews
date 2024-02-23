@@ -64,8 +64,9 @@ def _fetch_pageviews(pagenames, pageviews_file_path, output_path):
             if domain_code == "en" and page_title in pagenames:
                 result[page_title] = view_counts
     with open(output_path, mode="w", encoding="utf-8") as f:
-        f.write(json.dumps(result, indent=4))
-    print("Results:", json.load(output_path), sep="\n")
+        content = json.dumps(result, indent=4)
+        f.write(content)
+        print("Results:", content, sep="\n")
 
 
 fetch_pageviews = PythonOperator(
